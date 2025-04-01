@@ -3,6 +3,13 @@ from config import BASE_URL
 
 class APIClient:
     @staticmethod
+
+    def get_status():
+        """Status the Endpoint"""
+        url = f"{BASE_URL}/status"
+        response = requests.get(url)
+        return response
+
     def get_products():
         """Fetch all available products"""
         url =f"{BASE_URL}/products"

@@ -1,12 +1,22 @@
 import pytest
 from utils.api_client import APIClient
 
+
+def test_status():
+    """Status"""
+    response = APIClient.get_status()
+    assert response.status_code == 200
+    print("status Response:", response.json())
+    
 def test_get_products():
     """Test fectching all products"""
     response = APIClient.get_products()
     assert response.status_code == 200
     assert len(response.json()) > 0
     print("Add to Cart Response:", response.json())
+
+
+
 
 def test_get_product():
     """Test fetching a single product by ID"""
@@ -16,6 +26,9 @@ def test_get_product():
     assert response.json()["id"] == int(product_id)
     print("Add to Cart Response:", response.json())
 
+
+
+
 def test_add_to_cart():
     """Test adding a product to the cart"""
     product_id ="4643"
@@ -23,6 +36,9 @@ def test_add_to_cart():
     assert response.status_code == 201
     assert "cartId" in response.json()
     print("Add to Cart Response:", response.json())
+
+
+
 
 def test_get_cart():
     """Test fetching cart details"""

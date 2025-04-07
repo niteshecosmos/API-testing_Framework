@@ -27,8 +27,33 @@ class APIClient:
     def add_to_cart(product_id):
         """Add a product to the cart"""
         url = f"{BASE_URL}/carts"
-        payload = {"productID": product_id, "qaunity": 1}
+        payload = {
+            "productId": product_id, 
+            "quantity": 1
+        }
         response = requests.post(url,json = payload)
+        if response.status_code == 201:
+            return response.json().get("cartId")
+        return None
+    
+    @staticmethod
+    def add_to_item_the_cart(cart_id, product_id, quantity=1):
+        """Add the item in the cart"""
+        url = f"{BASE_URL}/carts/{cart_id}/items"
+        payload = {
+            "productId": int(product_id), 
+            "quantity": quantity
+        }
+        print("🔍 Sending Payload:", payload)   
+        response = requests.post(url, json=payload)
+        return response
+
+
+    @staticmethod
+    def created_cart(cartId):
+        """Created Cart item id"""
+        url = f"{BASE_URL}/carts/{cartId}"
+        response = requests.get(url)
         return response
 
     @staticmethod

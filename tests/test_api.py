@@ -1,4 +1,4 @@
-import pytest
+
 from utils.api_client import APIClient
 
 
@@ -16,6 +16,52 @@ def test_get_products():
     print("Add to Cart Response:", response.json())
 
 
+def test_add_to_cart():
+    """Test adding a product to the cart"""
+    product_Id = 4646
+    cartId = APIClient.add_to_cart(product_Id)
+    assert cartId is not None
+    print("Cart ID generated:",cartId)
+
+
+
+def test_created_cart():
+    product_Id = 4646
+    """Test the created cart with item id"""
+    cart_id = APIClient.add_to_cart(product_Id)
+    assert cart_id is not None,"Cart ID should not be None"
+
+    add_response = APIClient.add_to_item_the_cart(cart_id, product_Id)
+    
+    print("STATUS CODE:", add_response.status_code)
+    print("RESPONSE BODY:", add_response.text)
+    assert add_response.status_code == 201, "Failed to add item to cart"
+
+
+    response = APIClient.created_cart(cart_id)
+    assert response.status_code == 200,"Failed to fetch cart detials"
+    print("Add the created cart id:",response.json())
+
+    cart_data = response.json()
+    print("cart content:", cart_data)
+
+    assert any(item["productId"] == product_Id for item in cart_data.get("items", [])), "Product ID not found in cart items"
+
+
+
+
+
+
+
+def test_add_item_to_cart():
+    product_id = 4646
+    """Test adding an item to an existing cart"""
+    cart_id = APIClient.add_to_cart(product_id)
+    assert cart_id is not None,"Cart ID should not be done"
+
+    response = APIClient.add_to_item_the_cart(cart_id,product_id,quantity=1)
+    assert response.status_code == 201, f"Failed to add item to cart: {response.status_code}, Response: {response.text}"
+    print("Add the created item id:",response.json())
 
 
 def test_get_product():
@@ -25,31 +71,3 @@ def test_get_product():
     assert response.status_code == 200
     assert response.json()["id"] == int(product_id)
     print("Add to Cart Response:", response.json())
-
-
-
-
-def test_add_to_cart():
-    """Test adding a product to the cart"""
-    product_id ="4643"
-    response = APIClient.add_to_cart(product_id)
-    assert response.status_code == 201
-    assert "cartId" in response.json()
-    print("Add to Cart Response:", response.json())
-
-
-
-
-def test_get_cart():
-    """Test fetching cart details"""
-    product_id = "4643"
-    
-    add_response = APIClient.add_to_cart(product_id)
-    print("Add to Cart Response:", add_response.json())  # Debugging output
-
-    cart_id = add_response.json().get("cartId")  # Correct key name
-    
-    assert cart_id is not None, f"Cart ID is missing in response: {add_response.json()}"
-    
-    response = APIClient.get_cart(cart_id)
-    assert response.status_code == 200

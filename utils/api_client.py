@@ -62,3 +62,17 @@ class APIClient:
         url = f"{BASE_URL}/carts/{cart_id}"
         response = requests.get(url)
         return response
+    
+    @staticmethod
+    def update_item(cartId,itemId,product_id,quantity):
+        """Update the item"""
+        url =f"{BASE_URL}/carts/{cartId}/items/{itemId}"
+        payload = {
+            "productID": product_id,
+            "quantity" : quantity
+        }
+        print("PATCH URL:",url)
+        print("Payload sent to update item:", payload)
+        response = requests.patch(url, json=payload)
+        return response
+    

@@ -50,9 +50,6 @@ def test_created_cart():
 
 
 
-
-
-
 def test_add_item_to_cart():
     product_id = 4646
     """Test adding an item to an existing cart"""
@@ -64,6 +61,8 @@ def test_add_item_to_cart():
     print("Add the created item id:",response.json())
 
 
+
+
 def test_get_product():
     """Test fetching a single product by ID"""
     product_id = "4643"
@@ -71,3 +70,35 @@ def test_get_product():
     assert response.status_code == 200
     assert response.json()["id"] == int(product_id)
     print("Add to Cart Response:", response.json())
+
+
+def test_update_item():
+    """Test fecthing update the item"""
+    product_Id =  4646
+    
+    #Step 1: Add product to cart 
+    cart_id = APIClient.add_to_cart(product_Id)
+    assert cart_id is not None,"Cart ID should not be None"
+    print("Cart ID created:", cart_id)
+
+    #Step 2: Add item to the cart
+    add_response = APIClient.add_to_item_the_cart(cart_id, product_Id)
+    assert add_response.status_code == 201
+    response_data = add_response.json()
+    print("Item added to cart response:",response_data)
+
+    #Step 3:Extract item ID
+    item_id = response_data.get("itemId")   
+    assert item_id is not None,"Item ID should not be None"
+    print("Extracted Item ID:", item_id)
+
+    #Step 4: Update the item in cart
+    updated_quantity = 3
+    update_response = APIClient.update_item(cart_id, item_id,product_Id,updated_quantity)
+    assert update_response.status_code in [200, 204], f"Unexpected status: {update_response.status_code}"
+    print("Status Code:", update_response.status_code)
+
+    #Step 5 Get the update Item
+    response = APIClient.created_cart(cart_id)
+    assert response.status_code == 200,"Failed to fetch cart detials"
+    print("Add the created cart id:",response.json())

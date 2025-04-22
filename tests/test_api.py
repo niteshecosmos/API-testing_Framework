@@ -102,3 +102,34 @@ def test_update_item():
     response = APIClient.created_cart(cart_id)
     assert response.status_code == 200,"Failed to fetch cart detials"
     print("Add the created cart id:",response.json())
+
+def test_delete_item():
+    """Test fetching delete item""" 
+    product_id = "1225"
+
+    #Step 1 Add product to cart
+    cart_id = APIClient.add_to_cart(product_id)
+    assert cart_id is not None,"Cart ID should not be None"
+    print("Cart ID created:",cart_id)
+
+    #Step 2 Add item to the cart
+    add_response = APIClient.add_to_item_the_cart(cart_id,product_id)
+    assert add_response.status_code == 201
+    response_data = add_response.json()
+    print("Item added to cart response:",response_data)
+
+    #Step3 :Extract item ID
+    item_id =response_data.get("itemId")
+    assert item_id is not None,"Item ID should not be None"
+    print("Extracted Item ID:", item_id)
+
+    #Step4 : Update the item in cart 
+    updated_quantity = 4
+    update_response = APIClient.update_item(cart_id,item_id,product_id,updated_quantity)
+    assert update_response.status_code in [200,204], f"Unexcepted status:{update_response.status_code}"
+    print("Status Code:", update_response.status_code)
+
+    # Step 5: Delete the item from the cart
+    delete_response = APIClient.delete_item(cart_id, item_id)
+    assert delete_response.status_code in [200, 204], f"Unexpected delete status: {delete_response.status_code}"
+    print("✅ Item deleted successfully. Status:", delete_response.status_code)

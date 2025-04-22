@@ -75,4 +75,11 @@ class APIClient:
         print("Payload sent to update item:", payload)
         response = requests.patch(url, json=payload)
         return response
-    
+
+    @staticmethod
+    def delete_item(cart_id, item_id):
+        """Delete item from cart"""
+        url = f"{BASE_URL}/carts/{cart_id}/items/{item_id}"
+        print("🗑️ Sending DELETE request to:", url)
+        response = requests.delete(url)
+        return response
